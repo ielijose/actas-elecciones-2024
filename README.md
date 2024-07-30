@@ -1,5 +1,7 @@
 # Actas Elecciones 2024
 
+# FORKEALO, pero usa cache por favor !!!
+
 ## Table of Contents
 
 - [Features](#features)
@@ -16,7 +18,7 @@
 - Display of personal voting details
 - Viewing of acta (voting record) image when available
 - Error handling for API request failures
-- Google Analytics integration for tracking user interactions
+- Caching with Supabase 
 
 ## Prerequisites
 
@@ -24,7 +26,7 @@ Before you begin, ensure you have met the following requirements:
 
 - Node.js (v14.0.0 or later)
 - npm (v6.0.0 or later)
-- A Google Analytics 4 property (for analytics tracking)
+- A Supabase database
 
 ## Installation
 
