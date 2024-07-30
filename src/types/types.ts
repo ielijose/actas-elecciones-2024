@@ -24,16 +24,7 @@ export interface Acta {
 }
 
 export interface CIQueryResponse {
-  Success: boolean;
-  Messages: string[];
-  Errors: string[];
-  Data: {
-    Points: null;
-    Person: Person;
-    isSelectedMember: boolean;
-    MemberInfo: null;
-    acta: Acta;
-  };
+  url: string;
 }
 
 export interface FormData {

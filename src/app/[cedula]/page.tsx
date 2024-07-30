@@ -7,6 +7,7 @@ import Image from "next/image";
 import { toast } from "@/components/ui/use-toast";
 import ErrorMessage from "@/components/error-message";
 import { Metadata } from "next";
+import Link from "next/link";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -39,17 +40,12 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
 
   // If not in cache, fetch from API
   const response = await fetch(
-    "https://gdp.sicee-api.net/api/Search/SearchCNEPointsByCid",
+    `https://tvtcrhau2vo336qa5r66p3bygy0hazyk.lambda-url.us-east-1.on.aws/?cedula=V${cedula}`,
     {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-        accept: "application/json",
-        Referer: "https://resultadospresidencialesvenezuela2024.com/",
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
       },
-      body: JSON.stringify({ cid: `V${cedula}` }),
     }
   );
 
@@ -85,14 +81,7 @@ export default async function CedulaPage({
   try {
     const queryResult = await getCIData(cedula);
 
-    if (queryResult.Success) {
-      // notFound();
-      // return (
-      //   // <ErrorMessage message="No se encontraron datos para la cédula proporcionada." />
-      // );
-    }
-
-    const { Person, acta } = queryResult.Data;
+    const { url } = queryResult;
 
     return (
       <main className="flex min-h-screen flex-col items-center justify-between">
@@ -103,62 +92,27 @@ export default async function CedulaPage({
               Resultado de la consulta
             </AlertTitle>
             <AlertDescription>
-              <p>
-                <strong>Nombre:</strong> {Person.fullname}
-              </p>
-              <p>
-                <strong>Cédula:</strong> {Person.cid}
-              </p>
-              <p>
-                <strong>Fecha de Nacimiento:</strong> {Person.date}
-              </p>
-              <p>
-                <strong>Estado:</strong> {Person.state}
-              </p>
-              <p>
-                <strong>Municipio:</strong> {Person.mun}
-              </p>
-              <p>
-                <strong>Parroquia:</strong> {Person.par}
-              </p>
-              <p>
-                <strong>Centro de Votación:</strong> {Person.center}
-              </p>
-              <p>
-                <strong>Dirección:</strong> {Person.address}
-              </p>
-              {acta ? (
+              {url ? (
                 <>
-                  <p>
-                    <strong>Serial del Acta:</strong> {acta.serial}
+                  <p className="text-center">
+                    La consulta ha sido exitosa. Por favor, descargue el
+                    archivo{" "}<br/>
+                    <Link
+                      href={url}
+                      className="underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      a continuación
+                    </Link>
+                    .
                   </p>
-                  {acta.url && (
-                    <div className="mt-4">
-                      <p>
-                        <strong>Imagen del Acta:</strong>
-                      </p>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={acta.url}
-                        alt="Acta CNE"
-                        width={500}
-                        height={700}
-                      />
-
-                      {/* <Image
-                        src={acta.url}
-                        alt="Acta CNE"
-                        width={500}
-                        height={700}
-                        layout="responsive"
-                        objectFit="contain"
-                      /> */}
-                    </div>
-                  )}
+                  <img src={url} alt="Actas CNE" />
                 </>
               ) : (
-                <p className="text-xl text-center text-red-600">
-                  No se encontró el acta
+                <p className="text-center">
+                  La consulta no ha sido exitosa. Por favor, intente nuevamente
+                  mas tarde.
                 </p>
               )}
             </AlertDescription>
