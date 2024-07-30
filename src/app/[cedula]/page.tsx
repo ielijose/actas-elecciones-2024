@@ -11,9 +11,13 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
   const cacheKey = `v:${cedula}`;
 
   // Check cache first
-  const cachedData = await kv.get(cacheKey);
-  if (cachedData) {
-    return cachedData as CIQueryResponse;
+  try {
+    const cachedData = await kv.get(cacheKey);
+    if (cachedData) {
+      return cachedData as CIQueryResponse;
+    }
+  } catch (error) {
+    console.error("Error fetching data from cache:", error);
   }
 
   // If not in cache, fetch from API
