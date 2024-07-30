@@ -65,8 +65,8 @@ export default async function CedulaPage({
     const { Person, acta } = queryResult.Data;
 
     return (
-      <main className="flex min-h-screen flex-col items-center justify-between p-4">
-        <div className="w-full max-w-md">
+      <main className="flex min-h-screen flex-col items-center justify-between">
+        <div className="w-full">
           <QueryForm initialCedula={cedula} />
           <Alert className="mt-4">
             <AlertTitle className="text-xl text-center mb-2">

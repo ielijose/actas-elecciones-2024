@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <main className="flex min-h-screen flex-col items-center justify-between p-4">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-lg">
             <Link href="/">
               <h1 className="text-2xl font-bold mb-4 text-center">
                 Consulta Actas CNE
