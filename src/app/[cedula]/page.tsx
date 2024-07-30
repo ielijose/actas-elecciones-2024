@@ -1,12 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
-import { notFound } from "next/navigation";
+import ErrorMessage from "@/components/error-message";
+import { QueryForm } from "@/components/query-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CIQueryResponse } from "@/types/types";
-import { QueryForm } from "@/components/query-form";
-import Image from "next/image";
-import { toast } from "@/components/ui/use-toast";
-import ErrorMessage from "@/components/error-message";
+import { createClient } from "@supabase/supabase-js";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -24,13 +22,16 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
   try {
     const { data: cachedData, error } = await supabase
       .from("actas")
-      .select("data")
+      .select("data,url")
       .eq("ci", cedula)
       .single();
 
     console.log({ cachedData });
 
     if (cachedData && !error) {
+      if (cachedData.url) {
+        return cachedData as CIQueryResponse;
+      }
       return cachedData.data as CIQueryResponse;
     }
   } catch (error) {
@@ -38,10 +39,25 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
   }
 
   // If not in cache, fetch from API
+  // const response = await fetch(
+  //   "https://gdp.sicee-api.net/api/Search/SearchCNEPointsByCid",
+  //   {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       accept: "application/json",
+  //       Referer: "https://resultadospresidencialesvenezuela2024.com/",
+  //       "User-Agent":
+  //         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+  //     },
+  //     body: JSON.stringify({ cid: `V${cedula}` }),
+  //   }
+  // );
+
   const response = await fetch(
-    "https://gdp.sicee-api.net/api/Search/SearchCNEPointsByCid",
+    `https://tvtcrhau2vo336qa5r66p3bygy0hazyk.lambda-url.us-east-1.on.aws/?cedula=V${cedula}`,
     {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         accept: "application/json",
@@ -49,7 +65,6 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
         "User-Agent":
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
       },
-      body: JSON.stringify({ cid: `V${cedula}` }),
     }
   );
 
@@ -62,7 +77,7 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
   // Cache the response
   const { error } = await supabase
     .from("actas")
-    .upsert({ ci: cedula, data: data });
+    .upsert({ ci: cedula, url: data.url });
 
   if (error) {
     console.error("Error caching data:", error);
@@ -84,15 +99,18 @@ export default async function CedulaPage({
 
   try {
     const queryResult = await getCIData(cedula);
+    let actaImg = null;
 
-    if (queryResult.Success) {
-      // notFound();
-      // return (
-      //   // <ErrorMessage message="No se encontraron datos para la cédula proporcionada." />
-      // );
+    let person = null;
+    let acta = null;
+
+    if (queryResult.url) {
+      actaImg = queryResult.url;
+    } else if (queryResult?.Data?.acta?.url) {
+      actaImg = queryResult.Data.acta.url;
+      person = queryResult.Data.Person;
+      acta = queryResult.Data.acta;
     }
-
-    const { Person, acta } = queryResult.Data;
 
     return (
       <main className="flex min-h-screen flex-col items-center justify-between">
@@ -103,49 +121,49 @@ export default async function CedulaPage({
               Resultado de la consulta
             </AlertTitle>
             <AlertDescription>
-              <p>
-                <strong>Nombre:</strong> {Person.fullname}
-              </p>
-              <p>
-                <strong>Cédula:</strong> {Person.cid}
-              </p>
-              <p>
-                <strong>Fecha de Nacimiento:</strong> {Person.date}
-              </p>
-              <p>
-                <strong>Estado:</strong> {Person.state}
-              </p>
-              <p>
-                <strong>Municipio:</strong> {Person.mun}
-              </p>
-              <p>
-                <strong>Parroquia:</strong> {Person.par}
-              </p>
-              <p>
-                <strong>Centro de Votación:</strong> {Person.center}
-              </p>
-              <p>
-                <strong>Dirección:</strong> {Person.address}
-              </p>
-              {acta ? (
+              {person && (
+                <>
+                  <p>
+                    <strong>Nombre:</strong> {person.fullname}
+                  </p>
+                  <p>
+                    <strong>Cédula:</strong> {person.cid}
+                  </p>
+                  <p>
+                    <strong>Fecha de Nacimiento:</strong> {person.date}
+                  </p>
+                  <p>
+                    <strong>Estado:</strong> {person.state}
+                  </p>
+                  <p>
+                    <strong>Municipio:</strong> {person.mun}
+                  </p>
+                  <p>
+                    <strong>Parroquia:</strong> {person.par}
+                  </p>
+                  <p>
+                    <strong>Centro de Votación:</strong> {person.center}
+                  </p>
+                  <p>
+                    <strong>Dirección:</strong> {person.address}
+                  </p>
+                </>
+              )}
+
+              {acta && (
                 <>
                   <p>
                     <strong>Serial del Acta:</strong> {acta.serial}
                   </p>
-                  {acta.url && (
-                    <div className="mt-4">
-                      <p>
-                        <strong>Imagen del Acta:</strong>
-                      </p>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={acta.url}
-                        alt="Acta CNE"
-                        width={500}
-                        height={700}
-                      />
+                </>
+              )}
 
-                      {/* <Image
+              {actaImg && (
+                <div className="mt-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={actaImg} alt="Acta CNE" width={500} height={700} />
+
+                  {/* <Image
                         src={acta.url}
                         alt="Acta CNE"
                         width={500}
@@ -153,13 +171,7 @@ export default async function CedulaPage({
                         layout="responsive"
                         objectFit="contain"
                       /> */}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <p className="text-xl text-center text-red-600">
-                  No se encontró el acta
-                </p>
+                </div>
               )}
             </AlertDescription>
           </Alert>
