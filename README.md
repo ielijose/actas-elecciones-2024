@@ -18,7 +18,7 @@
 - Display of personal voting details
 - Viewing of acta (voting record) image when available
 - Error handling for API request failures
-- Supabase
+- Caching with Supabase 
 
 ## Prerequisites
 
