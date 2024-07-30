@@ -8,8 +8,15 @@ export default function Home() {
   const reportData: GroupedReport = groupedReportData;
   const sortedStates = sortEntriesByName<State>(Object.entries(reportData));
 
+  // calc total actas
+  const total = Object.values(reportData).reduce((acc, state) => {
+    return acc + state.total;
+  }, 0);
+
   return (
     <div className="container mx-auto p-4 mt-12">
+      <p className="mb-4 text-center">Total Actas: {total}</p>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sortedStates.map(([stateName, stateData]) => (
           <Card key={stateName}>
