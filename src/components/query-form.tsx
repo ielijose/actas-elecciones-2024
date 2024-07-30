@@ -66,7 +66,7 @@ export function QueryForm({ initialCedula = "" }: QueryFormProps) {
   }
 
   return (
-    <Card className="p-6 rounded-lg shadow-md">
+    <Card className="p-6 rounded-lg shadow-md max-w-md mx-auto mt-12">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField

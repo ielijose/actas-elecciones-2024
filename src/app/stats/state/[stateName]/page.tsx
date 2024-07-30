@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GroupedReport, Municipality } from "@/types/index";
-import groupedReportData from "../../../grouped_report.json";
+import groupedReportData from "@/grouped_report.json";
 import { sortEntriesByName } from "@/utils/sort-entries";
 import { NavigationHeader } from "@/components/navigation-header";
 

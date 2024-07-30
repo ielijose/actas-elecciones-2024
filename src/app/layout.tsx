@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Link from "next/link";
+import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { NewsBar } from "@/components/news-bar";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import Link from "next/link";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,10 +12,6 @@ export const metadata: Metadata = {
   title: "Consulta Actas CNE",
   description: "Informacion de Centros y mesas de votacion",
 };
-
-const newsMessages = [
-  "La API no está disponible en este momento. Mientras tanto, se mostrarán las actas que han sido categorizadas.",
-];
 
 export default function RootLayout({
   children,
@@ -25,16 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="flex min-h-screen flex-col items-center justify-between p-4 bg-gray-50">
-          <div className="w-full container">
-            <Link href="/">
-              <h1 className="text-4xl font-bold mb-4 text-center">
-                Consulta Actas CNE
-              </h1>
-            </Link>
-            {children}
-          </div>
-          <NewsBar messages={newsMessages} />
+        <Navbar />
+
+        <main className="flex min-h-screen flex-col items-center justify-between p-4 bg-gray-50  ">
+          <div className="w-full container">{children}</div>
         </main>
         <Toaster />
       </body>
