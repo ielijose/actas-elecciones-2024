@@ -1,112 +1,197 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+interface FormData {
+  cedula: string;
+}
+
+interface Person {
+  cid: string;
+  fullname: string;
+  date: string;
+  location: string;
+  state: string;
+  mun: string;
+  par: string;
+  center: string;
+  address: string;
+  table: string | null;
+  book: string | null;
+  page: string | null;
+  row: string | null;
+  markCheck: boolean;
+}
+
+interface Acta {
+  geo: string | null;
+  serial: string;
+  documentId: number;
+  url: string;
+  stages: string | null;
+}
+
+interface CNEQueryResponse {
+  Success: boolean;
+  Messages: string[];
+  Errors: string[];
+  Data: {
+    Points: null;
+    Person: Person;
+    isSelectedMember: boolean;
+    MemberInfo: null;
+    acta: Acta;
+  };
+}
 
 export default function Home() {
+  const { toast } = useToast();
+  const [queryResult, setQueryResult] = useState<CNEQueryResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<FormData>({
+    defaultValues: {
+      cedula: "",
+    },
+  });
+
+  async function onSubmit(values: FormData) {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cedula: values.cedula }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to query CNE");
+      }
+
+      const data: CNEQueryResponse = await response.json();
+      setQueryResult(data);
+      toast({
+        title: "Consulta exitosa",
+        description: "Se han obtenido los datos del CNE.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          "No se pudo realizar la consulta. Por favor, intente nuevamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const renderQueryResult = () => {
+    if (!queryResult || !queryResult.Success) return null;
+
+    const { Person, acta } = queryResult.Data;
+
+    return (
+      <Alert className="mt-4">
+        <AlertTitle>Resultado de la consulta</AlertTitle>
+        <AlertDescription>
+          <p>
+            <strong>Nombre:</strong> {Person.fullname}
+          </p>
+          <p>
+            <strong>Cédula:</strong> {Person.cid}
+          </p>
+          <p>
+            <strong>Fecha de Nacimiento:</strong> {Person.date}
+          </p>
+          <p>
+            <strong>Estado:</strong> {Person.state}
+          </p>
+          <p>
+            <strong>Municipio:</strong> {Person.mun}
+          </p>
+          <p>
+            <strong>Parroquia:</strong> {Person.par}
+          </p>
+          <p>
+            <strong>Centro de Votación:</strong> {Person.center}
+          </p>
+          <p>
+            <strong>Dirección:</strong> {Person.address}
+          </p>
+          <p>
+            <strong>Serial del Acta:</strong> {acta.serial}
+          </p>
+          {acta.url && (
+            <div className="mt-4">
+              <p>
+                <strong>Imagen del Acta:</strong>
+              </p>
+              <img src={acta.url} alt="Acta CNE" width={500} />
+            </div>
+          )}
+        </AlertDescription>
+      </Alert>
+    );
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <main className="flex min-h-screen flex-col items-center justify-between p-4">
+      <div className="w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-4 text-center">
+          Consulta Actas CNE
+        </h1>
+        <Card className="p-6 rounded-lg shadow-md">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="cedula"
+                rules={{
+                  required: "Este campo es requerido",
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "Por favor ingrese solo números",
+                  },
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cédula *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Ingrese número de cédula"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Consultando..." : "Consultar"}
+              </Button>
+            </form>
+          </Form>
+        </Card>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+        {renderQueryResult()}
       </div>
     </main>
   );
