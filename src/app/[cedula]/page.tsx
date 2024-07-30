@@ -41,12 +41,10 @@ async function getCIData(cedula: string): Promise<any> {
 
     console.log({ cachedData });
 
-    if (cachedData && !error) {
-      if (cachedData.data.url) {
-        return cachedData as CIQueryResponse;
-      }
-      return cachedData.data as CIQueryResponse;
+    if (cachedData && !error && cachedData.data.url) {
+        return cachedData.data as CIQueryResponse;
     }
+    
   } catch (error) {
     console.error("Error fetching data from cache:", error);
   }
