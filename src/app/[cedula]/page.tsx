@@ -137,14 +137,22 @@ export default async function CedulaPage({
                       <p>
                         <strong>Imagen del Acta:</strong>
                       </p>
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={acta.url}
+                        alt="Acta CNE"
+                        width={500}
+                        height={700}
+                      />
+
+                      {/* <Image
                         src={acta.url}
                         alt="Acta CNE"
                         width={500}
                         height={700}
                         layout="responsive"
                         objectFit="contain"
-                      />
+                      /> */}
                     </div>
                   )}
                 </>
