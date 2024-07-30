@@ -100,18 +100,30 @@ export default async function CedulaPage({
               {acta ? (
                 <>
                   <p>
-                    <strong>Acta:</strong> {acta.serial}
+                    <strong>Serial del Acta:</strong> {acta.serial}
                   </p>
-                  <p>
-                    <strong>URL:</strong>{" "}
-                    <a
-                      href={acta.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {acta.url}
-                    </a>
-                  </p>
+                  {acta.url && (
+                    <div className="mt-4">
+                      <p>
+                        <strong>Imagen del Acta:</strong>
+                      </p>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      {/* <img
+                    src={acta.url}
+                    alt="Acta CNE"
+                    style={{ maxWidth: "100%", height: "auto" }}
+                  /> */}
+
+                      <Image
+                        src={acta.url}
+                        alt="Acta CNE"
+                        width={500}
+                        height={700}
+                        layout="responsive"
+                        objectFit="contain"
+                      />
+                    </div>
+                  )}
                 </>
               ) : (
                 <p className="text-xl text-center text-red-600">
