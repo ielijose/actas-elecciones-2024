@@ -1,56 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { kv } from "@vercel/kv";
+import { CIQueryResponse } from "@/types/types";
+import { CACHE_EXPIRATION } from "@/constants";
 
-interface CNEQueryRequest {
+interface CIQueryRequest {
   cedula: string;
 }
 
-interface Person {
-  cid: string;
-  fullname: string;
-  date: string;
-  location: string;
-  state: string;
-  mun: string;
-  par: string;
-  center: string;
-  address: string;
-  table: string | null;
-  book: string | null;
-  page: string | null;
-  row: string | null;
-  markCheck: boolean;
-}
-
-interface Acta {
-  geo: string | null;
-  serial: string;
-  documentId: number;
-  url: string;
-  stages: string | null;
-}
-
-interface CNEQueryResponse {
-  Success: boolean;
-  Messages: string[];
-  Errors: string[];
-  Data: {
-    Points: null;
-    Person: Person;
-    isSelectedMember: boolean;
-    MemberInfo: null;
-    acta: Acta;
-  };
-}
-
-const CACHE_EXPIRATION = 60 * 60 * 24 * 30; // 30 days
-
 export async function POST(request: NextRequest) {
   try {
-    const { cedula }: CNEQueryRequest = await request.json();
+    const { cedula }: CIQueryRequest = await request.json();
+
+    const cacheKey = `v:${cedula}`;
 
     // Check cache first
-    const cachedData = await kv.get(`cne:${cedula}`);
+    const cachedData = await kv.get(cacheKey);
     if (cachedData) {
       console.log(`Using cached data: ${cedula}`);
       return NextResponse.json(cachedData);
@@ -73,13 +37,13 @@ export async function POST(request: NextRequest) {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch data from CNE API");
+      throw new Error("Failed to fetch data from API");
     }
 
-    const data: CNEQueryResponse = await response.json();
+    const data: CIQueryResponse = await response.json();
 
     // Cache the response
-    await kv.set(`cne:${cedula}`, data, { ex: CACHE_EXPIRATION });
+    await kv.set(cacheKey, data, { ex: CACHE_EXPIRATION });
 
     return NextResponse.json(data);
   } catch (error) {
