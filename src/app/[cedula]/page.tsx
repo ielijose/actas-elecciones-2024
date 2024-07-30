@@ -81,9 +81,9 @@ export default async function CedulaPage({
 
     if (queryResult.Success) {
       // notFound();
-      return (
-        <ErrorMessage message="No se encontraron datos para la cédula proporcionada." />
-      );
+      // return (
+      //   // <ErrorMessage message="No se encontraron datos para la cédula proporcionada." />
+      // );
     }
 
     const { Person, acta } = queryResult.Data;
