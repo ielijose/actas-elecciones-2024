@@ -4,6 +4,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CIQueryResponse } from "@/types/types";
 import { QueryForm } from "@/components/query-form";
 import Image from "next/image";
+import { toast } from "@/components/ui/use-toast";
+import ErrorMessage from "@/components/error-message";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -77,8 +79,11 @@ export default async function CedulaPage({
   try {
     const queryResult = await getCIData(cedula);
 
-    if (!queryResult.Success) {
-      notFound();
+    if (queryResult.Success) {
+      // notFound();
+      return (
+        <ErrorMessage message="No se encontraron datos para la cédula proporcionada." />
+      );
     }
 
     const { Person, acta } = queryResult.Data;
@@ -149,6 +154,11 @@ export default async function CedulaPage({
     );
   } catch (error) {
     console.error("Error fetching data:", error);
-    notFound();
+
+    // notFound();
+
+    return (
+      <ErrorMessage message="Hubo un error al procesar su solicitud. Por favor, intente nuevamente más tarde." />
+    );
   }
 }
