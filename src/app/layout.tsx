@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import { Toaster } from "@/components/ui/toaster";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { NewsBar } from "@/components/news-bar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,6 +12,10 @@ export const metadata: Metadata = {
   title: "Consulta Actas CNE",
   description: "Informacion de Centros y mesas de votacion",
 };
+
+const newsMessages = [
+  "La API no está disponible en este momento. Mientras tanto, se mostrarán las actas que han sido categorizadas.",
+];
 
 export default function RootLayout({
   children,
@@ -29,6 +34,7 @@ export default function RootLayout({
             </Link>
             {children}
           </div>
+          <NewsBar messages={newsMessages} />
         </main>
         <Toaster />
       </body>
