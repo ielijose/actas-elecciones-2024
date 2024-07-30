@@ -37,6 +37,10 @@ export function QueryForm({ initialCedula = "" }: QueryFormProps) {
   }, [initialCedula, form]);
 
   async function onSubmit(values: FormData) {
+    if (values.cedula === initialCedula) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       router.push(`/${values.cedula}`);
