@@ -8,30 +8,44 @@ import { toast } from "@/components/ui/use-toast";
 import ErrorMessage from "@/components/error-message";
 import { Metadata } from "next";
 
+const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const NEXT_PUBLIC_SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if(!NEXT_PUBLIC_SUPABASE_URL || !NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  throw new Error("Missing Supabase credentials");
+}
+
 // Initialize Supabase client
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  NEXT_PUBLIC_SUPABASE_URL,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
+
 
 export const metadata: Metadata = {
   title: "Resultado | Consulta Actas CNE",
   description: "Informacion de Centros y mesas de votacion",
 };
 
-async function getCIData(cedula: string): Promise<CIQueryResponse> {
+async function getCIData(cedula: string): Promise<any> {
   // Check cache first
   try {
+    const cedulaInt = parseInt(cedula);
+    if (!cedulaInt) {
+      throw new Error("Cedula Invalida");
+    }
+
     const { data: cachedData, error } = await supabase
       .from("actas")
       .select("data")
-      .eq("ci", cedula)
+      .eq("ci", cedulaInt)
       .single();
 
     console.log({ cachedData });
 
     if (cachedData && !error) {
-      return cachedData.data as CIQueryResponse;
+      console.log('Data cached...');
+      return cachedData.data;
     }
   } catch (error) {
     console.error("Error fetching data from cache:", error);
@@ -39,9 +53,9 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
 
   // If not in cache, fetch from API
   const response = await fetch(
-    "https://gdp.sicee-api.net/api/Search/SearchCNEPointsByCid",
+    `https://tvtcrhau2vo336qa5r66p3bygy0hazyk.lambda-url.us-east-1.on.aws/?cedula=V${cedula}`,
     {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         accept: "application/json",
@@ -49,7 +63,6 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
         "User-Agent":
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
       },
-      body: JSON.stringify({ cid: `V${cedula}` }),
     }
   );
 
@@ -57,15 +70,18 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
     throw new Error("Failed to fetch data from API");
   }
 
-  const data: CIQueryResponse = await response.json();
+  const data = await response.json();
 
-  // Cache the response
-  const { error } = await supabase
+  // Cache the response if the acta is founded
+  if(data.url) {
+    console.log('Acta founded, caching data');
+    const { error } = await supabase
     .from("actas")
     .upsert({ ci: cedula, data: data });
-
-  if (error) {
-    console.error("Error caching data:", error);
+    
+    if (error) {
+      console.error("Error caching data:", error);
+    }
   }
 
   return data;
@@ -85,14 +101,8 @@ export default async function CedulaPage({
   try {
     const queryResult = await getCIData(cedula);
 
-    if (queryResult.Success) {
-      // notFound();
-      // return (
-      //   // <ErrorMessage message="No se encontraron datos para la cédula proporcionada." />
-      // );
-    }
-
-    const { Person, acta } = queryResult.Data;
+    const { url } = queryResult;
+    // const { Person, acta } = queryResult.Data;
 
     return (
       <main className="flex min-h-screen flex-col items-center justify-between">
@@ -103,7 +113,7 @@ export default async function CedulaPage({
               Resultado de la consulta
             </AlertTitle>
             <AlertDescription>
-              <p>
+              {/* <p>
                 <strong>Nombre:</strong> {Person.fullname}
               </p>
               <p>
@@ -126,20 +136,20 @@ export default async function CedulaPage({
               </p>
               <p>
                 <strong>Dirección:</strong> {Person.address}
-              </p>
-              {acta ? (
+              </p> */}
+              {url ? (
                 <>
-                  <p>
+                  {/* <p>
                     <strong>Serial del Acta:</strong> {acta.serial}
-                  </p>
-                  {acta.url && (
+                  </p> */}
+                  {url && (
                     <div className="mt-4">
                       <p>
                         <strong>Imagen del Acta:</strong>
                       </p>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={acta.url}
+                        src={url}
                         alt="Acta CNE"
                         width={500}
                         height={700}
@@ -172,7 +182,7 @@ export default async function CedulaPage({
     // notFound();
 
     return (
-      <ErrorMessage message="Hubo un error al procesar su solicitud. Por favor, intente nuevamente más tarde." />
+      <ErrorMessage message="Hubo un error al procesar su solicitud. Es posible que el servidor esté caído por muchas peticiones o el acta todavia no ha sido cargada. Por favor, intente nuevamente más tarde." />
     );
   }
 }
