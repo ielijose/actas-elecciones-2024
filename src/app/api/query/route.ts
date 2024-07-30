@@ -22,17 +22,12 @@ export async function POST(request: NextRequest) {
     console.log(`Using API data: ${cedula}`);
 
     const response = await fetch(
-      "https://gdp.sicee-api.net/api/Search/SearchCNEPointsByCid",
+      `https://tvtcrhau2vo336qa5r66p3bygy0hazyk.lambda-url.us-east-1.on.aws/?cedula=V${cedula}`,
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
-          accept: "application/json",
-          Referer: "https://resultadospresidencialesvenezuela2024.com/",
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
         },
-        body: JSON.stringify({ cid: `V${cedula}` }),
       }
     );
 
