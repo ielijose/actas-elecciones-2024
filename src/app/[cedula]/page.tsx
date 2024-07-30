@@ -102,7 +102,6 @@ export default async function CedulaPage({
     const queryResult = await getCIData(cedula);
 
     const { url } = queryResult;
-    // const { Person, acta } = queryResult.Data;
 
     return (
       <main className="flex min-h-screen flex-col items-center justify-between">
@@ -113,35 +112,8 @@ export default async function CedulaPage({
               Resultado de la consulta
             </AlertTitle>
             <AlertDescription>
-              {/* <p>
-                <strong>Nombre:</strong> {Person.fullname}
-              </p>
-              <p>
-                <strong>Cédula:</strong> {Person.cid}
-              </p>
-              <p>
-                <strong>Fecha de Nacimiento:</strong> {Person.date}
-              </p>
-              <p>
-                <strong>Estado:</strong> {Person.state}
-              </p>
-              <p>
-                <strong>Municipio:</strong> {Person.mun}
-              </p>
-              <p>
-                <strong>Parroquia:</strong> {Person.par}
-              </p>
-              <p>
-                <strong>Centro de Votación:</strong> {Person.center}
-              </p>
-              <p>
-                <strong>Dirección:</strong> {Person.address}
-              </p> */}
               {url ? (
                 <>
-                  {/* <p>
-                    <strong>Serial del Acta:</strong> {acta.serial}
-                  </p> */}
                   {url && (
                     <div className="mt-4">
                       <p>
@@ -154,15 +126,6 @@ export default async function CedulaPage({
                         width={500}
                         height={700}
                       />
-
-                      {/* <Image
-                        src={acta.url}
-                        alt="Acta CNE"
-                        width={500}
-                        height={700}
-                        layout="responsive"
-                        objectFit="contain"
-                      /> */}
                     </div>
                   )}
                 </>
@@ -178,8 +141,6 @@ export default async function CedulaPage({
     );
   } catch (error) {
     console.error("Error fetching data:", error);
-
-    // notFound();
 
     return (
       <ErrorMessage message="Hubo un error al procesar su solicitud. Es posible que el servidor esté caído por muchas peticiones o el acta todavia no ha sido cargada. Por favor, intente nuevamente más tarde." />
