@@ -5,6 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CIQueryResponse } from "@/types/types";
 import { QueryForm } from "@/components/query-form";
 import { CACHE_EXPIRATION } from "@/constants";
+import Image from "next/image";
 
 async function getCIData(cedula: string): Promise<CIQueryResponse> {
   const cacheKey = `v:${cedula}`;
@@ -105,10 +106,19 @@ export default async function CedulaPage({
                     <strong>Imagen del Acta:</strong>
                   </p>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  {/* <img
                     src={acta.url}
                     alt="Acta CNE"
                     style={{ maxWidth: "100%", height: "auto" }}
+                  /> */}
+
+                  <Image
+                    src={acta.url}
+                    alt="Acta CNE"
+                    width={500}
+                    height={700}
+                    layout="responsive"
+                    objectFit="contain"
                   />
                 </div>
               )}
