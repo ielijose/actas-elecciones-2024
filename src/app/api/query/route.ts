@@ -52,10 +52,10 @@ export async function POST(request: NextRequest) {
     // Check cache first
     const cachedData = await kv.get(`cne:${cedula}`);
     if (cachedData) {
-      console.log("Using cached data");
+      console.log(`Using cached data: ${cedula}`);
       return NextResponse.json(cachedData);
     }
-    console.log("Using API data");
+    console.log(`Using API data: ${cedula}`);
 
     const response = await fetch(
       "https://gdp.sicee-api.net/api/Search/SearchCNEPointsByCid",
