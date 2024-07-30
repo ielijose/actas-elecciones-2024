@@ -97,30 +97,26 @@ export default async function CedulaPage({
               <p>
                 <strong>Dirección:</strong> {Person.address}
               </p>
-              <p>
-                <strong>Serial del Acta:</strong> {acta.serial}
-              </p>
-              {acta.url && (
-                <div className="mt-4">
+              {acta ? (
+                <>
                   <p>
-                    <strong>Imagen del Acta:</strong>
+                    <strong>Acta:</strong> {acta.serial}
                   </p>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {/* <img
-                    src={acta.url}
-                    alt="Acta CNE"
-                    style={{ maxWidth: "100%", height: "auto" }}
-                  /> */}
-
-                  <Image
-                    src={acta.url}
-                    alt="Acta CNE"
-                    width={500}
-                    height={700}
-                    layout="responsive"
-                    objectFit="contain"
-                  />
-                </div>
+                  <p>
+                    <strong>URL:</strong>{" "}
+                    <a
+                      href={acta.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {acta.url}
+                    </a>
+                  </p>
+                </>
+              ) : (
+                <p className="text-xl text-center text-red-600">
+                  No se encontró el acta
+                </p>
               )}
             </AlertDescription>
           </Alert>

@@ -41,6 +41,15 @@ export function QueryForm({ initialCedula = "" }: QueryFormProps) {
       return;
     }
 
+    if (values.cedula.length > 8) {
+      toast({
+        title: "Error",
+        description: "La cédula no puede tener más de 8 dígitos",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       router.push(`/${values.cedula}`);
@@ -68,6 +77,10 @@ export function QueryForm({ initialCedula = "" }: QueryFormProps) {
               pattern: {
                 value: /^[0-9]+$/,
                 message: "Por favor ingrese solo números",
+              },
+              maxLength: {
+                value: 8,
+                message: "La cédula no puede tener más de 8 dígitos",
               },
             }}
             render={({ field }) => (
