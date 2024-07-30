@@ -43,7 +43,7 @@ async function getCIData(cedula: string): Promise<any> {
 
     console.log({ cachedData });
 
-    if (cachedData && !error) {
+    if (cachedData && !error && cachedData.data?.url) {
       console.log('Data cached...');
       return cachedData.data;
     }
