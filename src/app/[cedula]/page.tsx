@@ -1,20 +1,29 @@
-// app/[cedula]/page.tsx
-import { kv } from "@vercel/kv";
+import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CIQueryResponse } from "@/types/types";
 import { QueryForm } from "@/components/query-form";
-import { CACHE_EXPIRATION } from "@/constants";
 import Image from "next/image";
 
-async function getCIData(cedula: string): Promise<CIQueryResponse> {
-  const cacheKey = `v:${cedula}`;
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
+async function getCIData(cedula: string): Promise<CIQueryResponse> {
   // Check cache first
   try {
-    const cachedData = await kv.get(cacheKey);
-    if (cachedData) {
-      return cachedData as CIQueryResponse;
+    const { data: cachedData, error } = await supabase
+      .from("actas")
+      .select("data")
+      .eq("ci", cedula)
+      .single();
+
+    console.log({ cachedData });
+
+    if (cachedData && !error) {
+      return cachedData.data as CIQueryResponse;
     }
   } catch (error) {
     console.error("Error fetching data from cache:", error);
@@ -43,7 +52,13 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
   const data: CIQueryResponse = await response.json();
 
   // Cache the response
-  await kv.set(cacheKey, data, { ex: CACHE_EXPIRATION });
+  const { error } = await supabase
+    .from("actas")
+    .upsert({ ci: cedula, data: data });
+
+  if (error) {
+    console.error("Error caching data:", error);
+  }
 
   return data;
 }
@@ -111,13 +126,6 @@ export default async function CedulaPage({
                       <p>
                         <strong>Imagen del Acta:</strong>
                       </p>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      {/* <img
-                    src={acta.url}
-                    alt="Acta CNE"
-                    style={{ maxWidth: "100%", height: "auto" }}
-                  /> */}
-
                       <Image
                         src={acta.url}
                         alt="Acta CNE"
