@@ -6,12 +6,18 @@ import { QueryForm } from "@/components/query-form";
 import Image from "next/image";
 import { toast } from "@/components/ui/use-toast";
 import ErrorMessage from "@/components/error-message";
+import { Metadata } from "next";
 
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+
+export const metadata: Metadata = {
+  title: "Resultado | Consulta Actas CNE",
+  description: "Informacion de Centros y mesas de votacion",
+};
 
 async function getCIData(cedula: string): Promise<CIQueryResponse> {
   // Check cache first

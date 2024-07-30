@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Actas Elecciones 2024
 
-## Getting Started
+## Table of Contents
 
-First, run the development server:
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
 
-```bash
+## Features
+
+- Consultation of voting information by cédula
+- Display of personal voting details
+- Viewing of acta (voting record) image when available
+- Error handling for API request failures
+- Google Analytics integration for tracking user interactions
+
+## Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- Node.js (v14.0.0 or later)
+- npm (v6.0.0 or later)
+- A Google Analytics 4 property (for analytics tracking)
+
+## Installation
+
+1. Clone the repository:
+
+   ```
+   git clone https://github.com/ielijose/actas-elecciones-2024.git
+   cd actas-elecciones-2024
+   ```
+
+2. Install the dependencies:
+   ```
+   npm install
+   ```
+
+## Configuration
+
+1. Create a `.env.local` file in the root directory of the project.
+
+2. Add the following environment variables to the `.env.local` file:
+
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=
+   SUPABASE_SERVICE_ROLE_KEY=
+   ```
+
+   Replace varaibles with your actual Supabase credentials.
+
+## Running the Application
+
+To run the application in development mode:
+
+```
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This application is designed to be deployed on Vercel, but you can deploy it to any platform that supports Next.js applications.
 
-## Learn More
+### Deploying to Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. Push your code to a GitHub repository.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Go to [Vercel](https://vercel.com) and sign up or log in.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+3. Click on "Import Project" and select your GitHub repository.
 
-## Deploy on Vercel
+4. Configure your project settings:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   - Framework Preset: Next.js
+   - Build Command: `npm run build`
+   - Output Directory: `.next`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+5. Add your environment variables in the Vercel project settings.
+
+6. Click "Deploy" and wait for the deployment to complete.
+
+### Deploying to Other Platforms
+
+For other platforms, consult their specific documentation for deploying Next.js applications. Generally, you'll need to:
+
+1. Build the application:
+
+   ```
+   npm run build
+   ```
+
+2. Start the application in production mode:
+   ```
+   npm start
+   ```
+
+Ensure that you set up your environment variables on your hosting platform.
+
+## Contributing
+
+Contributions to this project are welcome. Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch: `git checkout -b feature-branch-name`.
+3. Make your changes and commit them: `git commit -m 'Add some feature'`.
+4. Push to the branch: `git push origin feature-branch-name`.
+5. Create a pull request.
