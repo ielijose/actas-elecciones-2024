@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { kv } from "@vercel/kv";
 
 interface CNEQueryRequest {
   cedula: string;
@@ -42,9 +43,19 @@ interface CNEQueryResponse {
   };
 }
 
+const CACHE_EXPIRATION = 60 * 60 * 24 * 30; // 30 days
+
 export async function POST(request: NextRequest) {
   try {
     const { cedula }: CNEQueryRequest = await request.json();
+
+    // Check cache first
+    const cachedData = await kv.get(`cne:${cedula}`);
+    if (cachedData) {
+      console.log("Using cached data");
+      return NextResponse.json(cachedData);
+    }
+    console.log("Using API data");
 
     const response = await fetch(
       "https://gdp.sicee-api.net/api/Search/SearchCNEPointsByCid",
@@ -66,6 +77,9 @@ export async function POST(request: NextRequest) {
     }
 
     const data: CNEQueryResponse = await response.json();
+
+    // Cache the response
+    await kv.set(`cne:${cedula}`, data, { ex: CACHE_EXPIRATION });
 
     return NextResponse.json(data);
   } catch (error) {
