@@ -26,7 +26,6 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
       .from("actas")
       .select("data,url")
       .eq("ci", cedula)
-
       .single();
 
     console.log({ cachedData });
@@ -87,9 +86,9 @@ async function getCIData(cedula: string): Promise<CIQueryResponse> {
   );
 
   if (!response.ok) {
-    response.text().then((text) => {
-      throw new Error(text);
-    });
+    // response.text().then((text) => {
+    //   throw new Error(text);
+    // });
 
     throw new Error("Error fetching data");
   }
@@ -203,8 +202,6 @@ export default async function CedulaPage({
       </main>
     );
   } catch (error) {
-    console.error("Error fetching data:", error);
-
     // notFound();
 
     return (
