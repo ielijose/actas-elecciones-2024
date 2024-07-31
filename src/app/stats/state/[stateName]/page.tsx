@@ -11,7 +11,8 @@ interface StatePageProps {
 
 export default function StatePage({ params }: StatePageProps) {
   const reportData: GroupedReport = groupedReportData;
-  const { stateName } = params;
+
+  const stateName = decodeURIComponent(params.stateName);
   const stateData = reportData[stateName];
 
   if (!stateData) {
