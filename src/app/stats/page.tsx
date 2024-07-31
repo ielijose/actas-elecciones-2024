@@ -1,39 +1,31 @@
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { GroupedReport, State } from "@/types/index";
-import groupedReportData from "@/grouped_report.json";
-import { sortEntriesByName } from "@/utils/sort-entries";
 
 export default function Home() {
-  const reportData: GroupedReport = groupedReportData;
-  const sortedStates = sortEntriesByName<State>(Object.entries(reportData));
-
-  // calc total actas
-  const total = Object.values(reportData).reduce((acc, state) => {
-    return acc + state.total;
-  }, 0);
-
   return (
-    <div className="container mx-auto p-4 mt-12">
-      <p className="mb-4 text-center">Total Actas: {total}</p>
+    <div className="mx-auto mt-4 lg:mt-12">
+      <h1 className="text-3xl text-center mb-8">
+        Sección desactivada debido a su uso indebido para generar confusión.
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sortedStates.map(([stateName, stateData]) => (
-          <Link
-            href={`/stats/state/${encodeURIComponent(stateName)}`}
-            className="text-blue-600 "
-            key={stateName}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-blue-600 ">{stateName}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>Total Actas: {stateData.total}</p>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+      <p className="text-xl text-center mb-8">
+        El sitio web{" "}
+        <a
+          className="text-blue-500 hover:text-blue-600 transition-colors"
+          target="_blank"
+          href="https://resultadosconvzla.com/"
+        >
+          resultadosconvzla.com
+        </a>{" "}
+        es el sitio web oficial para la consulta de actas recopiladas.
+      </p>
+      <div className="max-w-2xl mx-auto">
+        <Link
+          target="_blank"
+          href="https://x.com/RoiLopezRivas/status/1818671002458390790"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/RoiLopezRivas.png" alt="" className="w-full" />
+        </Link>
       </div>
     </div>
   );

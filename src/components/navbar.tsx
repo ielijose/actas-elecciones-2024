@@ -5,11 +5,18 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { ExternalLink, Menu } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Buscar por CI" },
   { href: "/stats", label: "Actas por estado" },
+
+  {
+    href: "https://resultadosconvzla.com/",
+    label: "Sitio Oficial",
+    variant: "primary",
+    external: true,
+  },
 ];
 
 export function Navbar() {
@@ -21,8 +28,15 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex-shrink-0">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              Consulta Actas CNE
+            <Link href="/" className="text-primary">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                <h1 className="text-xl sm:text-2xl font-bold leading-tight">
+                  Consulta Actas CNE
+                </h1>
+                <p className="text-xs sm:text-sm font-normal mt-1 sm:mt-0">
+                  (Version Independiente)
+                </p>
+              </div>
             </Link>
           </div>
           <div className="hidden md:block">
@@ -31,14 +45,23 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  target={item.external ? "_blank" : undefined}
                   className={cn(
-                    "px-3 py-2 rounded-md text-sm font-medium",
+                    "px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 flex items-center gap-1.5",
                     pathname === item.href
-                      ? "bg-primary text-primary-foreground"
-                      : "text-secondary-foreground hover:bg-primary/10 hover:text-primary"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "text-secondary-foreground hover:bg-primary/10 hover:text-primary",
+
+                    // blue if primary
+
+                    item.variant === "primary"
+                      ? "bg-blue-600 hover:bg-blue-500 text-white hover:text-white  "
+                      : ""
                   )}
                 >
                   {item.label}
+
+                  {item.external && <ExternalLink className="h-4 w-4" />}
                 </Link>
               ))}
             </div>
@@ -58,15 +81,20 @@ export function Navbar() {
                       <Link
                         key={item.href}
                         href={item.href}
+                        target={item.external ? "_blank" : undefined}
                         className={cn(
-                          "block px-3 py-2 rounded-md text-base font-medium",
+                          "flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium ",
                           pathname === item.href
                             ? "bg-primary text-primary-foreground"
-                            : "text-secondary-foreground hover:bg-primary/10 hover:text-primary"
+                            : "text-secondary-foreground hover:bg-primary/10 hover:text-primary",
+                          item.variant === "primary"
+                            ? "bg-blue-600 hover:bg-blue-500 text-white hover:text-white  "
+                            : ""
                         )}
                         onClick={() => setIsOpen(false)}
                       >
                         {item.label}
+                        {item.external && <ExternalLink className="h-4 w-4" />}
                       </Link>
                     ))}
                   </div>
