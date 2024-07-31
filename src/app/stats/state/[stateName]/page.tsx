@@ -29,23 +29,22 @@ export default function StatePage({ params }: StatePageProps) {
       <p className="mb-4 text-center">Total Actas: {stateData.total}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sortedMunicipalities.map(([munName, munData]) => (
-          <Card key={munName}>
-            <CardHeader>
-              <CardTitle>
-                <Link
-                  href={`/state/${encodeURIComponent(
-                    stateName
-                  )}/${encodeURIComponent(munName)}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {munName}
-                </Link>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Total Actas: {munData.total}</p>
-            </CardContent>
-          </Card>
+          <Link
+            href={`/stats/state/${encodeURIComponent(
+              stateName
+            )}/${encodeURIComponent(munName)}`}
+            className="text-blue-600 hover:underline"
+            key={munName}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-blue-600 ">{munName}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Total Actas: {munData.total}</p>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

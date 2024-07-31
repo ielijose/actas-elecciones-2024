@@ -15,7 +15,7 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
     <h1 className="text-3xl font-bold mb-4 mt-12 text-center">
       {state && (
         <Link
-          href={`/state/${encodeURIComponent(state)}`}
+          href={`/stats/state/${encodeURIComponent(state)}`}
           className="hover:underline"
         >
           {state}
@@ -25,9 +25,9 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
         <>
           {" - "}
           <Link
-            href={`/state/${encodeURIComponent(state)}/${encodeURIComponent(
-              municipality
-            )}`}
+            href={`/stats/state/${encodeURIComponent(
+              state
+            )}/${encodeURIComponent(municipality)}`}
             className="hover:underline"
           >
             {municipality}

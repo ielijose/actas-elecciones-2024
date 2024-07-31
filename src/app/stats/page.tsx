@@ -19,21 +19,20 @@ export default function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sortedStates.map(([stateName, stateData]) => (
-          <Card key={stateName}>
-            <CardHeader>
-              <CardTitle>
-                <Link
-                  href={`/state/${encodeURIComponent(stateName)}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {stateName}
-                </Link>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Total Actas: {stateData.total}</p>
-            </CardContent>
-          </Card>
+          <Link
+            href={`/stats/state/${encodeURIComponent(stateName)}`}
+            className="text-blue-600 "
+            key={stateName}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-blue-600 ">{stateName}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Total Actas: {stateData.total}</p>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

@@ -33,25 +33,21 @@ export default function MunicipalityPage({ params }: MunicipalityPageProps) {
       <p className="mb-4 text-center">Total Actas: {munData.total}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sortedParishes.map(([parName, parData]) => (
-          <Card key={parName}>
-            <CardHeader>
-              <CardTitle>
-                <Link
-                  href={`/state/${encodeURIComponent(
-                    stateName
-                  )}/${encodeURIComponent(munName)}/${encodeURIComponent(
-                    parName
-                  )}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {parName}
-                </Link>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Total Actas: {parData.total}</p>
-            </CardContent>
-          </Card>
+          <Link
+            href={`/stats/state/${encodeURIComponent(
+              stateName
+            )}/${encodeURIComponent(munName)}/${encodeURIComponent(parName)}`}
+            key={parName}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-blue-600">{parName}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Total Actas: {parData.total}</p>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
