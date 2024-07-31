@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Center, GroupedReport } from "@/types/index";
 import { sortEntriesByName } from "@/utils/sort-entries";
-import groupedReportData from "../../../../../grouped_report.json";
+import groupedReportData from "@/grouped_report.json";
 import { NavigationHeader } from "@/components/navigation-header";
 
 interface ParishPageProps {

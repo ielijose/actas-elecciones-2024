@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GroupedReport, State } from "@/types/index";
-import groupedReportData from "../../grouped_report.json";
+import groupedReportData from "@/grouped_report.json";
 import { sortEntriesByName } from "@/utils/sort-entries";
 
 export default function Home() {
