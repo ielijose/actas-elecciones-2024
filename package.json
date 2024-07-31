@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^3.9.0",
     "@next/third-parties": "^14.2.5",
     "@radix-ui/react-checkbox": "^1.1.1",
+    "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
