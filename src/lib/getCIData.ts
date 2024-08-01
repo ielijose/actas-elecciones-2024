@@ -20,7 +20,7 @@ export async function getCIData(cedula: string): Promise<CIQueryResponse> {
         .eq("ci", cedula)
         .single();
   
-      console.log({ cachedData });
+      // console.log({ cachedData });
   
       if (cachedData && !error) {
         if (cachedData.url) {
@@ -77,6 +77,7 @@ export async function getCIData(cedula: string): Promise<CIQueryResponse> {
       requestOptions
     );
   
+
     if (!response.ok) {
       // response.text().then((text) => {
       //   throw new Error(text);

@@ -9,6 +9,7 @@ export const VideoForm: React.FC<VideoFormProps> = ({ cedula }) => {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -27,6 +28,7 @@ export const VideoForm: React.FC<VideoFormProps> = ({ cedula }) => {
     formData.append('file', file);
     formData.append('cedula', cedula);
 
+    setLoading(true);
     try {
       const response = await fetch('/api/uploadVideo', {
         method: 'POST',
@@ -43,6 +45,8 @@ export const VideoForm: React.FC<VideoFormProps> = ({ cedula }) => {
     } catch (err) {
       setError('Error uploading file. Please try again.');
       setSuccess(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,12 +57,12 @@ export const VideoForm: React.FC<VideoFormProps> = ({ cedula }) => {
           <label htmlFor="video">Upload Video:</label>
           <input type="file" id="video" accept="video/*" onChange={handleFileChange} />
         </div>
-        <button type="submit" className="mt-2 p-2 bg-blue-500 text-white">Upload</button>
+        <button type="submit" className="mt-2 p-2 bg-blue-500 text-white" disabled={loading}>
+          {loading ? 'Uploading...' : 'Upload'}
+        </button>
       </form>
       {error && <p className="text-red-500 mt-2">{error}</p>}
       {success && <p className="text-green-500 mt-2">{success}</p>}
     </div>
   );
 };
-
-

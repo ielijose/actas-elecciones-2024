@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
+import { Storage } from '@google-cloud/storage';
 import path from 'path';
+import { Readable } from 'stream';
 
 export const config = {
   api: {
@@ -8,42 +9,69 @@ export const config = {
   },
 };
 
-const uploadDir = path.join(process.cwd(), 'uploads');
+const bucketName = process.env.GOOGLE_BUCKET_NAME;
+const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
+
+
+if (!serviceAccountJson) {
+  throw new Error('Environment variable GOOGLE_SERVICE_ACCOUNT_JSON is not defined');
 }
+
+const serviceAccount = JSON.parse(serviceAccountJson);
+
+const storage = new Storage({
+  projectId: serviceAccount.project_id,
+  credentials: {
+    client_email: serviceAccount.client_email,
+    private_key: serviceAccount.private_key,
+  },
+});
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File;
+    const cedula = formData.get('cedula') as string;
 
     if (!file) {
       return NextResponse.json({ message: 'No files uploaded' }, { status: 400 });
     }
 
-    const filePath = path.join(uploadDir, file.name);
-    const fileStream = fs.createWriteStream(filePath);
+    if (!cedula) {
+      return NextResponse.json({ message: 'Cedula is required' }, { status: 400 });
+    }
+
+    // Sanitize file name
+    const sanitizedFileName = path.basename(file.name);
+    const videoPath = `videos/${cedula}/${sanitizedFileName}`;
+
+    if (!bucketName) {
+      throw new Error('Environment variable GOOGLE_BUCKET_NAME is not defined');
+    }
+    const bucket = storage.bucket(bucketName);
+    const blob = bucket.file(videoPath);
+    const blobStream = blob.createWriteStream();
+
     const reader = file.stream().getReader();
 
     const pump = async () => {
       const { done, value } = await reader.read();
       if (done) {
-        fileStream.end();
+        blobStream.end();
         return;
       }
-      fileStream.write(value);
+      blobStream.write(value);
       await pump();
     };
 
     await pump();
 
-    // Here you can add additional logic to handle the uploaded file, e.g., save to a database
-
-    return NextResponse.json({ message: 'File uploaded successfully', filePath }, { status: 200 });
+    return NextResponse.json({ message: 'File uploaded successfully', filePath: `gs://${bucketName}/${videoPath}` }, { status: 200 });
   } catch (err) {
-    return NextResponse.json({ message: 'Error uploading file' }, { status: 500 });
+    console.error('Error uploading file:', err);
+    // @ts-ignore
+    return NextResponse.json({ message: 'Error uploading file', error: err.message }, { status: 500 });
   }
 }
 
