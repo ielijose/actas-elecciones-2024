@@ -54,7 +54,7 @@ export const VideoForm: React.FC<VideoFormProps> = ({ cedula }) => {
     <div className="mt-4">
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="video">Upload Video:</label>
+          <label htmlFor="video">Sube un vídeo de prueba del acta</label>
           <input type="file" id="video" accept="video/*" onChange={handleFileChange} />
         </div>
         <button type="submit" className="mt-2 p-2 bg-blue-500 text-white" disabled={loading}>
