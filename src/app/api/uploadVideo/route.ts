@@ -3,11 +3,7 @@ import { Storage } from '@google-cloud/storage';
 import path from 'path';
 import { Readable } from 'stream';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+
 
 const bucketName = process.env.GOOGLE_BUCKET_NAME;
 const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
