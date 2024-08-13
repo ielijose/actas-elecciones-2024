@@ -9,7 +9,9 @@ import { ExternalLink, Menu } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Buscar por CI" },
-  { href: "/stats", label: "Actas por estado" },
+  // { href: "/stats", label: "Actas por estado" },
+
+  { href: "/mapa", label: "GRAN PROTESTA MUNDIAL POR LA VERDAD 📍" },
 
   {
     href: "https://resultadosconvzla.com/",
@@ -24,7 +26,7 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-secondary">
+    <nav className="bg-white border-b">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex-shrink-0">
