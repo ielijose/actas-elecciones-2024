@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CityEvent, locations } from "./data";
-import Link from "next/link";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { LoaderIcon } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { CityEvent, locations } from "./data";
 
 // Haversine formula to calculate distance between two points on Earth
 function calculateDistance(
