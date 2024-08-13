@@ -150,9 +150,6 @@ export default function MapComponent() {
                   <div className="flex flex-col">
                     <h3 className="font-bold">{loc.city}</h3>
                     <h4 className="">{loc.place.name}</h4>
-                    {distanceToNearest && (
-                      <p>Distance: {distanceToNearest.toFixed(2)} km</p>
-                    )}
 
                     <div className="flex justify-center items-center flex-col">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -167,7 +164,7 @@ export default function MapComponent() {
                         href={`https://www.google.com/maps/search/?api=1&query=${loc.place.latitude},${loc.place.longitude}`}
                       >
                         <Button variant={"outline"}>
-                          Abrir en Google Maps
+                          Abrir en Google Maps !
                         </Button>
                       </Link>
                     </div>
