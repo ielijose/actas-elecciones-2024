@@ -35,3 +35,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env
+
+actas/*
+actas_v1/*
+
+scripts/*
+output/*
+supabase/*
